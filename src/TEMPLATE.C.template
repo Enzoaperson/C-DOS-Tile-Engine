@@ -1,0 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <dos.h>
+#include <i86.h>
+
+extern unsigned char keys[256];
+
+
+void function(){
+}
