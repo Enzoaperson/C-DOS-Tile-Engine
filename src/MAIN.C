@@ -18,6 +18,8 @@
 
 #define SCROLL_SPEED 2
 
+extern unsigned char *VGA_BUFFER;
+
 char startup_issues = 0;
 char frame = 0;
 
@@ -28,11 +30,10 @@ extern short x_scroll, y_scroll;
 
 int main(){
 	unsigned char gu8_i, quit = 0;
-	unsigned char *screen, *tile_buffer;
+	unsigned char *tile_buffer;
 	short x_scroll_old = 1, y_scroll_old = 0;
 	unsigned int test = 10;
-	tileset enzo, sky, fish, font, smb, s1nums;
-	tileset dummy;
+	tileset enzo, sky, fish, bug, smb, s1nums;
 	//map mp;
 	sprites sp;
 	
@@ -49,21 +50,20 @@ int main(){
 	sky = open_tileset("data/skyop.dat");
 	enzo = open_tileset("data/enzo.dat");
 	fish = open_tileset("data/fish.dat");
-	font = open_tileset("data/font.dat");
 	smb = open_tileset("data/smb.dat");
 	s1nums = open_tileset("data/s1nums.dat");
+	bug = open_tileset("data/motobug.dat");
 	//dummy = open_tileset("na.dat"); // Should produce an error (because it doesn't exist!)
 
 	//Making some sprites
 	create_sprite(&sp, &enzo, (SCREEN_WIDTH/2)-(enzo.width/2), (SCREEN_HEIGHT/2)+(enzo.height/2), OBJ_PLAYER);
-	//create_sprite(&sp, &fish, 64, 64, OBJ_FISH);
+	create_sprite(&sp, &bug, 160, 100, 0);
 	//create_sprite(&sp, &fish, 15, 45, OBJ_FISH);
 	//create_sprite(&sp, &font, 100, 100, 0x00);
 
 	//Loading Map
 	mp = open_map("data/map.dat", &smb);
 
-	screen = create_screen_buffer(); 
 	tile_buffer = create_screen_buffer();
 
 	if(startup_issues){
@@ -76,7 +76,8 @@ int main(){
 	}
 	//Start graphics 
 	set_mode(MODE_VGA);
-	clear_screen(0x00, screen);
+	clear_screen(0x00, VGA_SCRN);
+	clear_screen(0x00, VGA_BUFFER);
 	clear_screen(0x00, tile_buffer);
 
 	while(!quit){
@@ -115,14 +116,14 @@ int main(){
 			x_scroll_old = x_scroll;
 			y_scroll_old = y_scroll;
 		}
-		buffer_copy(tile_buffer, screen);
-		draw_sprites(screen, &sp);
-		//memcpy_transparent(screen, (enzo.pointer+60), 120);
+		buffer_copy(tile_buffer, VGA_BUFFER);
+		draw_sprites(VGA_BUFFER, &sp);
+
 		//Pause for Vblanking
 		while ((inp(INPUT_STATUS) & VRETRACE));
 		while (!(inp(INPUT_STATUS) & VRETRACE));
 		//Copy VGA buffer to VGA display
-		screen_copy(screen);
+		screen_copy(VGA_BUFFER);
 		frame++;
 		frame %= 70;
 	
@@ -130,8 +131,6 @@ int main(){
 	set_mode(MODE_TEXT);
 	//Return interrupt
 	_dos_setvect(0x09, prev_int_09);
-	printf("%p\n", enzo.pointer+test);
-	printf("%x\n", memcpy_transparent(screen, enzo.pointer+test, 2));
 	close_tileset(sky);
 	close_tileset(enzo);
 	close_tileset(fish);

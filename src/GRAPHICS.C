@@ -24,7 +24,8 @@
 
 #define ERROR 1
 
-unsigned char *VGA_SCRN = (unsigned char *)0xA0000;
+unsigned char *VGA_SCRN = (unsigned char *)0xA0000; //Actual Screen RAM
+unsigned char *VGA_BUFFER = (unsigned char *)0xAFA00; //Unused leftover RAM of the VGA card
 extern char startup_issues;
 extern short x_scroll;
 extern short y_scroll;
