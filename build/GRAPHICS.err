@@ -1,4 +1,0 @@
-../src/GRAPHICS.C(97): Warning! W124: Comparison result always 1
-../src/GRAPHICS.C(98): Warning! W124: Comparison result always 1
-../src/GRAPHICS.C(195): Warning! W111: Meaningless use of an expression
-../src/GRAPHICS.C(250): Warning! W131: No prototype found for function 'outp'
