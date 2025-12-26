@@ -14,7 +14,7 @@ extern char frame;
 extern map mp;
 
 void player(sprite *sp){
-	short tile_x = ((sp->x+(sp->g->width/2))/16), tile_y = ((sp->y+sp->g->height)/16);
+	short tile_x_left = ((sp->x+(11))/16), tile_y = ((sp->y+sp->g->height)/16), tile_x_right = ((sp->x+(21))/16);
 	//Init itself if it already hasn't
 	if(sp->gss_1 == -1){ 
 		sp->gss_1 = 0;
@@ -28,7 +28,9 @@ void player(sprite *sp){
 	//Actual code
 	if(keys[KEY_J] == 1){
 		sp->x--;
-		cam_hoz_scroll(-1);
+		if(sp->x <= ((mp.hoz_screens-1)*320)+160){
+			cam_hoz_scroll(-1);
+		}
 	}
 	if(keys[KEY_L] == 1){
 		sp->x++;
@@ -40,7 +42,7 @@ void player(sprite *sp){
 	if(!frame){
 		sp->tile ^= 1;
 	}
-	if(!mp.data_pointer[tile_x + tile_y*(mp.hoz_screens*(320/16))]){
+	if((!mp.data_pointer[tile_x_left + tile_y*(mp.hoz_screens*(320/16))]) && (!mp.data_pointer[tile_x_right + tile_y*(mp.hoz_screens*(320/16))])){
 		if(!(frame % 12) && sp->gss_1 < 4){
 			sp->gss_1++;
 		}
