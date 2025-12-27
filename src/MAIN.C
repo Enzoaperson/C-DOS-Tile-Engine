@@ -18,8 +18,6 @@
 
 #define SCROLL_SPEED 2
 
-extern unsigned char *VGA_BUFFER;
-
 char startup_issues = 0;
 char frame = 0;
 
@@ -30,7 +28,7 @@ extern short x_scroll, y_scroll;
 
 int main(){
 	unsigned char gu8_i, quit = 0;
-	unsigned char *tile_buffer;
+	unsigned char *tile_buffer, *scrn_buffer;
 	short x_scroll_old = 1, y_scroll_old = 0;
 	unsigned int test = 10;
 	tileset enzo, sky, fish, bug, smb, s1nums;
@@ -65,6 +63,7 @@ int main(){
 	mp = open_map("data/map.dat", &smb);
 
 	tile_buffer = create_screen_buffer();
+	scrn_buffer = create_screen_buffer();
 
 	if(startup_issues){
 		printf("There were problems while loading graphics and sprites...\n");
@@ -77,7 +76,7 @@ int main(){
 	//Start graphics 
 	set_mode(MODE_VGA);
 	clear_screen(0x00, VGA_SCRN);
-	clear_screen(0x00, VGA_BUFFER);
+	clear_screen(0x00, scrn_buffer);
 	clear_screen(0x00, tile_buffer);
 
 	while(!quit){
@@ -116,14 +115,14 @@ int main(){
 			x_scroll_old = x_scroll;
 			y_scroll_old = y_scroll;
 		}
-		buffer_copy(tile_buffer, VGA_BUFFER);
-		draw_sprites(VGA_BUFFER, &sp);
+		buffer_copy(tile_buffer, scrn_buffer);
+		draw_sprites(scrn_buffer, &sp);
 
 		//Pause for Vblanking
 		while ((inp(INPUT_STATUS) & VRETRACE));
 		while (!(inp(INPUT_STATUS) & VRETRACE));
 		//Copy VGA buffer to VGA display
-		screen_copy(VGA_BUFFER);
+		screen_copy(scrn_buffer);
 		frame++;
 		frame %= 70;
 	
